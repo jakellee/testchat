@@ -1,0 +1,51 @@
+<!DOCTYPE html> <html> <head> <title>Chat with ChatGPT</title> <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> </head> <body> <h1>Chat with ChatGPT</h1> <div id="chat-container"></div> <input type="text" id="user-input" placeholder="User"> <button id="send-button">Send</button> <div id="chatgpt-output"></div>
+
+<script>
+    function chatWithChatGPT(message) {
+        var url = "https://api4.gravityengine.cc/v1/chat/completions";
+        var headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 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"
+        };
+        var data = {
+            "model": "gpt-4-32k-0613",
+            "messages": [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": message}
+            ]
+        };
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            headers: headers,
+            data: JSON.stringify(data),
+            success: function(response) {
+                var choices = response.choices[0].message.content;
+                $("#chat-container").append("<p><strong>User:</strong> " + message + "</p>");
+                $("#chat-container").append("<p><strong>ChatGPT:</strong> " + choices + "</p>");
+                $("#chatgpt-output").text(choices);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $("#send-button").click(function() {
+            var userInput = $("#user-input").val();
+            chatWithChatGPT(userInput);
+            $("#user-input").val("");
+        });
+
+        $("#user-input").keypress(function(event) {
+            if (event.which === 13) {
+                var userInput = $("#user-input").val();
+                chatWithChatGPT(userInput);
+                $("#user-input").val("");
+            }
+        });
+    });
+</script>
+</body> </html>
